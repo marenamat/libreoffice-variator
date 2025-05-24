@@ -1,2 +1,2 @@
-src := prelim_icon.png
+src := odt-export.png pdf-export.png
 $(pack-src)

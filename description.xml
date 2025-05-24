@@ -5,7 +5,7 @@
  xmlns:xlink="http://www.w3.org/1999/xlink">
     <identifier value="cz.jmq.variator"/>
     <icon>
-        <default xlink:href="icons/prelim_icon.png" />
+        <default xlink:href="icons/pdf-export.png" />
     </icon>
     <version value="1.0"/>
     <registration>

@@ -23,7 +23,7 @@
                   <value>AddLast</value>
                </prop>
                <node oor:name="ToolBarItems">
-                  <node oor:name="NMain" oor:op="replace">
+                  <node oor:name="NPDF" oor:op="replace">
                      <prop oor:name="Context" oor:type="xs:string">
                         <value/>
                      </prop>
@@ -31,7 +31,7 @@
                         <value xml:lang="en">Variator</value>
                      </prop>
                      <prop oor:name="URL" oor:type="xs:string">
-		  	<value>vnd.sun.star.script:Variator.Variator.Main?language=Basic&amp;location=application</value>
+		  	<value>vnd.sun.star.script:Variator.Variator.PDF?language=Basic&amp;location=application</value>
 	       	     </prop>
                      <prop oor:name="Target" oor:type="xs:string">
                         <value>_self</value>
@@ -45,7 +45,7 @@
                         <value xml:lang="en">Variator</value>
                      </prop>
                      <prop oor:name="URL" oor:type="xs:string">
-		       <value>vnd.sun.star.script:Variator.Variator.Aux?language=Basic&amp;location=application</value>
+		       <value>vnd.sun.star.script:Variator.Variator.ODT?language=Basic&amp;location=application</value>
 		     </prop>
                      <prop oor:name="Target" oor:type="xs:string">
                         <value>_self</value>
@@ -57,13 +57,23 @@
       </node>
 
       <node oor:name="Images">
-         <node oor:name="Variator.OfficeToolbarMerging.NMerging" oor:op="replace">
+         <node oor:name="Variator.OfficeToolbarMerging.NPDF" oor:op="replace">
 	    <prop oor:name="URL" oor:type="xs:string">
-               <value>vnd.sun.star.script:Variator.Variator.Main?language=Basic&amp;location=application</value>
+               <value>vnd.sun.star.script:Variator.Variator.PDF?language=Basic&amp;location=application</value>
             </prop>
             <node oor:name="UserDefinedImages">
 		<prop oor:name="ImageSmallURL" oor:type="xs:string">
-                  <value>%origin%/icons/prelim_icon.png</value>
+                  <value>%origin%/icons/pdf-export.png</value>
+               </prop>
+            </node>
+         </node>
+         <node oor:name="Variator.OfficeToolbarMerging.NODT" oor:op="replace">
+	    <prop oor:name="URL" oor:type="xs:string">
+	       <value>vnd.sun.star.script:Variator.Variator.ODT?language=Basic&amp;location=application</value>
+            </prop>
+            <node oor:name="UserDefinedImages">
+		<prop oor:name="ImageSmallURL" oor:type="xs:string">
+                  <value>%origin%/icons/odt-export.png</value>
                </prop>
             </node>
          </node>

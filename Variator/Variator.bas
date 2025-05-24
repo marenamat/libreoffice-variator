@@ -7,7 +7,7 @@ End Type
 
 Function VarNameSplit (Name as String) As VarVar
   Dim V As New VarVar
-  If Left(Name, 8) = "Variant " Then
+  If Name <> "Variant ID" And Left(Name, 8) = "Variant " Then
     V.Letter = Right(Name, 1)
     V.Num = CInt(Mid(Name, 9, Len(Name)-9))
   End If
@@ -58,14 +58,37 @@ End Function
 Sub Generate (Vars as Variant, Cur() as Integer, path as String)
   Dim Info as String
   Dim VN as Integer
+  Dim Varmin as Integer
   Info = ""
   VN = UBound(Vars)
+  VarMin = Vars(0).Num
 
   For I = 0 To VN
     Info = Info & Mid(Vars(I).Letter, Cur(I)+1, 1)
-'      Info = Info & Cur(I)
   Next I
   MsgBox "Generate " & Info
+
+  Dim Undo
+  Undo = ThisComponent.getUndoManager()
+  Undo.enterUndoContext("Generate " & Info)
+  For Each B in ThisComponent.Bookmarks
+    Dim VNS as VarVar
+    If B.Name = "Variant ID" Then
+      C = ThisComponent.Text.createTextCursorByRange(B.Anchor)
+      C.String = Info
+    End If
+
+    VNS = VarNameSplit(B.Name)
+    If Len(VNS.Letter) = 1 Then
+      Dim LocPos As Integer
+      LocPos = VNS.Num - VarMin
+      If Mid(Vars(LocPos).Letter, Cur(LocPos) + 1, 1) <> VNS.Letter Then
+	C = ThisComponent.Text.createTextCursorByRange(B.Anchor)
+	C.String = ""
+      End If
+    End If
+  Next B
+  Undo.leaveUndoContext()
 
   Dim Px as String
   If Right(path, 4) = ".odt" Then
@@ -74,14 +97,21 @@ Sub Generate (Vars as Variant, Cur() as Integer, path as String)
     Px = path & "-" & Info & ".odt"
   End If
 
-  Dim doc, args()
-  doc = StarDesktop.loadComponentFromURL("private:factory/swriter", "_blank", 0, args())
+  Dim args()
+  ThisComponent.storeToUrl(Px, args())
+  Undo.undo()
 
-  doc.storeAsURL(Px, args())
-  doc.close(True)
+'  Dim doc, args()
+'  doc = StarDesktop.loadComponentFromURL("private:factory/swriter", "_blank", 0, args())
+'  doc.Text = ThisComponent.Text
+'  For Each B In doc.Bookmarks
+'    B.String = "I"
+'  Next B
+'  doc.storeAsURL(Px, args())
+'  doc.close(True)
 End Sub
 
-Sub Main
+Sub ODT
   Dim Vars as Variant
   Vars = LoadVariants()
 
@@ -130,6 +160,6 @@ Sub Main
 '      C.String = "B " & B.Name & " – " & " – EOB"
 End Sub
 
-Sub Aux
+Sub PDF
   MsgBox "PeekaBoo!"
 End Sub
