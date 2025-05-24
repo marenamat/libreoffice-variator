@@ -2,7 +2,3 @@
 <!DOCTYPE script:module PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "module.dtd">
 <script:module xmlns:script="http://openoffice.org/2000/script" script:name="Variator" script:language="StarBasic" script:moduleType="normal">REM  *****  BASIC  *****
 
-Sub Main
-	MsgBox &quot;Hello, world!&quot;
-End Sub
-</script:module>
