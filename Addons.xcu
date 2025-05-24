@@ -5,7 +5,7 @@
    <node oor:name="AddonUI">
       <node oor:name="OfficeToolbarMerging">
          <node oor:name="Variator.OfficeToolbarMerging" oor:op="replace">
-            <node oor:name="N001" oor:op="replace">
+            <node oor:name="NMerging" oor:op="replace">
                <prop oor:name="MergeContext" oor:type="xs:string">
 		  <value>com.sun.star.text.TextDocument</value>
                </prop>
@@ -13,7 +13,8 @@
                   <value>standardbar</value>
                </prop>
                <prop oor:name="MergePoint" oor:type="xs:string">
-                  <value>.uno:ExportDirectToPDF</value>
+		 <!--                  <value>.uno:ExportDirectToPDF</value>-->
+		 <value>.uno:CharmapControl</value>
                </prop>
                <prop oor:name="MergeCommand" oor:type="xs:string">
                   <value>AddAfter</value>
@@ -22,7 +23,7 @@
                   <value>AddLast</value>
                </prop>
                <node oor:name="ToolBarItems">
-                  <node oor:name="N002" oor:op="replace">
+                  <node oor:name="NMain" oor:op="replace">
                      <prop oor:name="Context" oor:type="xs:string">
                         <value/>
                      </prop>
@@ -36,13 +37,27 @@
                         <value>_self</value>
                      </prop>
                   </node>
+                  <node oor:name="NAux" oor:op="replace">
+                     <prop oor:name="Context" oor:type="xs:string">
+                        <value/>
+                     </prop>
+                     <prop oor:name="Title" oor:type="xs:string">
+                        <value xml:lang="en">Variator</value>
+                     </prop>
+                     <prop oor:name="URL" oor:type="xs:string">
+		       <value>vnd.sun.star.script:Variator.Variator.Aux?language=Basic&amp;location=application</value>
+		     </prop>
+                     <prop oor:name="Target" oor:type="xs:string">
+                        <value>_self</value>
+                     </prop>
+                  </node>
                </node>
             </node>
          </node>
       </node>
 
       <node oor:name="Images">
-         <node oor:name="HelloWorldLibrary.OfficeToolbarMerging.N001" oor:op="replace">
+         <node oor:name="Variator.OfficeToolbarMerging.NMerging" oor:op="replace">
 	    <prop oor:name="URL" oor:type="xs:string">
                <value>vnd.sun.star.script:Variator.Variator.Main?language=Basic&amp;location=application</value>
             </prop>

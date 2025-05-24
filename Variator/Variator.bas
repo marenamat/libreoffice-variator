@@ -1,6 +1,8 @@
 Type VarVar
   Letter As String
   Num As Integer
+  Bookmarks(26) As Variant
+  Stored(26) As Variant
 End Type
 
 Function VarNameSplit (Name as String) As VarVar
@@ -22,7 +24,7 @@ Function LoadVariants As Variant
   For Each B In ThisComponent.Bookmarks
     VN = VarNameSplit(B.Name)
     If Len(VN.Letter) = 1 Then
-      MsgBox "Found section " & VN.Num & ", variant " & VN.Letter
+'      MsgBox "Found section " & VN.Num & ", variant " & VN.Letter
       If VN.Num > VarMax Then
 	VarMax = VN.Num
       End If
@@ -41,25 +43,93 @@ Function LoadVariants As Variant
     VN = VarNameSplit(B.Name)
     If Len(VN.Letter) = 1 Then
       Vars(VN.Num-VarMin).Num = VN.Num
+      Vars(VN.Num-VarMin).Bookmarks(Len(Vars(VN.Num-VarMin).Letter)) = B
       Vars(VN.Num-VarMin).Letter = Vars(VN.Num-VarMin).Letter & VN.Letter
     End If
   Next B
 
-  For I = 0 To UBound(Vars)
-    MsgBox "Section " & Vars(I).Num & " has variants " & Vars(I).Letter
-  Next I
+'  For I = 0 To UBound(Vars)
+'    MsgBox "Section " & Vars(I).Num & " has variants " & Vars(I).Letter
+'  Next I
 
   LoadVariants = Vars
 End Function
+
+Sub Generate (Vars as Variant, Cur() as Integer, path as String)
+  Dim Info as String
+  Dim VN as Integer
+  Info = ""
+  VN = UBound(Vars)
+
+  For I = 0 To VN
+    Info = Info & Mid(Vars(I).Letter, Cur(I)+1, 1)
+'      Info = Info & Cur(I)
+  Next I
+  MsgBox "Generate " & Info
+
+  Dim Px as String
+  If Right(path, 4) = ".odt" Then
+    Px = Left(path, Len(path) - 4) & "-" & Info & ".odt"
+  Else
+    Px = path & "-" & Info & ".odt"
+  End If
+
+  Dim doc, args()
+  doc = StarDesktop.loadComponentFromURL("private:factory/swriter", "_blank", 0, args())
+
+  doc.storeAsURL(Px, args())
+  doc.close(True)
+End Sub
 
 Sub Main
   Dim Vars as Variant
   Vars = LoadVariants()
 
-  For I = 0 To UBound(Vars)
+  Dim VN as Integer
+  VN = UBound(Vars)
+
+  Dim Cur(VN) as Integer
+  For I = 0 To VN
     MsgBox "Section " & Vars(I).Num & " has variants " & Vars(I).Letter
+    Cur(I) = 0
   Next I
+
+  dlg_save = CreateUnoService("com.sun.star.ui.dialogs.FilePicker")
+  With dlg_save
+    .Initialize(Array(2))
+    .AppendFilter("Text documents ODF (.odt)", "*.odt" )
+  End With
+
+  Dim path
+  If dlg_save.Execute() Then
+    path = dlg_save.getFiles()(0)
+    MsgBox ConvertFromUrl(path)
+  Else
+    MsgBox "Failed!"
+    Exit Sub
+  End If
+
+  Dim Carry as Boolean
+  While Not Carry
+    Generate(Vars, Cur, path)
+
+    Carry = True
+    For I = 0 To VN
+      If Carry Then
+	Cur(I) = Cur(I) + 1
+	If Cur(I) = Len(Vars(I).Letter) Then
+	  Cur(I) = 0
+	Else
+	  Carry = False
+	End If
+      End If
+    Next I
+  Wend
 
 '      C = ThisComponent.Text.createTextCursorByRange(B.Anchor)
 '      C.String = "B " & B.Name & " – " & " – EOB"
+End Sub
+
+Sub Aux
+  MsgBox "PeekaBoo!"
 End Sub
