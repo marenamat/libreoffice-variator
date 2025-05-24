@@ -55,7 +55,7 @@ Function LoadVariants As Variant
   LoadVariants = Vars
 End Function
 
-Sub Generate (Vars as Variant, Cur() as Integer, path as String)
+Sub Generate (Vars as Variant, Cur() as Integer, path as String, FSuffix as String, SaveArgs as Variant)
   Dim Info as String
   Dim VN as Integer
   Dim Varmin as Integer
@@ -66,7 +66,7 @@ Sub Generate (Vars as Variant, Cur() as Integer, path as String)
   For I = 0 To VN
     Info = Info & Mid(Vars(I).Letter, Cur(I)+1, 1)
   Next I
-  MsgBox "Generate " & Info
+'  MsgBox "Generate " & Info
 
   Dim Undo
   Undo = ThisComponent.getUndoManager()
@@ -91,27 +91,17 @@ Sub Generate (Vars as Variant, Cur() as Integer, path as String)
   Undo.leaveUndoContext()
 
   Dim Px as String
-  If Right(path, 4) = ".odt" Then
-    Px = Left(path, Len(path) - 4) & "-" & Info & ".odt"
+  If Right(path, Len(FSuffix)) = FSuffix Then
+    Px = Left(path, Len(path) - Len(FSuffix)) & "-" & Info & FSuffix
   Else
-    Px = path & "-" & Info & ".odt"
+    Px = path & "-" & Info & FSuffix
   End If
 
-  Dim args()
-  ThisComponent.storeToUrl(Px, args())
+  ThisComponent.storeToUrl(Px, SaveArgs())
   Undo.undo()
-
-'  Dim doc, args()
-'  doc = StarDesktop.loadComponentFromURL("private:factory/swriter", "_blank", 0, args())
-'  doc.Text = ThisComponent.Text
-'  For Each B In doc.Bookmarks
-'    B.String = "I"
-'  Next B
-'  doc.storeAsURL(Px, args())
-'  doc.close(True)
 End Sub
 
-Sub ODT
+Sub Frobnicate (FDesc as String, FSuffix as String, SaveArgs as Variant)
   Dim Vars as Variant
   Vars = LoadVariants()
 
@@ -127,7 +117,8 @@ Sub ODT
   dlg_save = CreateUnoService("com.sun.star.ui.dialogs.FilePicker")
   With dlg_save
     .Initialize(Array(2))
-    .AppendFilter("Text documents ODF (.odt)", "*.odt" )
+'    .AppendFilter("Text documents ODF (.odt)", "*.odt" )
+    .AppendFilter(FDesc & " (" & FSuffix & ")", "*" & FSuffix )
   End With
 
   Dim path
@@ -141,7 +132,7 @@ Sub ODT
 
   Dim Carry as Boolean
   While Not Carry
-    Generate(Vars, Cur, path)
+    Generate(Vars, Cur, path, FSuffix, SaveArgs)
 
     Carry = True
     For I = 0 To VN
@@ -160,6 +151,14 @@ Sub ODT
 '      C.String = "B " & B.Name & " – " & " – EOB"
 End Sub
 
+Sub ODT
+  Dim args()
+  Frobnicate("Text documents ODF", ".odt", args())
+End Sub
+
 Sub PDF
-  MsgBox "PeekaBoo!"
+  Dim args(0) As New "com.sun.star.beans.PropertyValue"
+  args(0).Name = "FilterName"
+  args(0).Value = "writer_pdf_Export"
+  Frobnicate("Portable Document Format", ".pdf", args())
 End Sub
