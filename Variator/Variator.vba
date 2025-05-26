@@ -68,23 +68,36 @@ Sub Generate (Vars as Variant, Cur() as Integer, path as String, FSuffix as Stri
   Next I
 '  MsgBox "Generate " & Info
 
+  VXP = ""
+  For Each B in ThisComponent.Bookmarks
+    VXP = VXP & ", " & B.Name
+  Next B
+
+'  MsgBox "Bookmarks " & VXP
+
   Dim Undo
   Undo = ThisComponent.getUndoManager()
   Undo.enterUndoContext("Generate " & Info)
   For Each B in ThisComponent.Bookmarks
+'    MsgBox "Checking " & B.Name
     Dim VNS as VarVar
     If B.Name = "Variant ID" Then
       C = ThisComponent.Text.createTextCursorByRange(B.Anchor)
       C.String = Info
-    End If
-
-    VNS = VarNameSplit(B.Name)
-    If Len(VNS.Letter) = 1 Then
-      Dim LocPos As Integer
-      LocPos = VNS.Num - VarMin
-      If Mid(Vars(LocPos).Letter, Cur(LocPos) + 1, 1) <> VNS.Letter Then
-	C = ThisComponent.Text.createTextCursorByRange(B.Anchor)
-	C.String = ""
+    Else
+      VNS = VarNameSplit(B.Name)
+      If Len(VNS.Letter) = 1 Then
+	Dim LocPos As Integer
+	LocPos = VNS.Num - VarMin
+	If Mid(Vars(LocPos).Letter, Cur(LocPos) + 1, 1) <> VNS.Letter Then
+'	  MsgBox "Deleting " & B.Name
+	  C = ThisComponent.Text.createTextCursorByRange(B.Anchor)
+	  C.String = " "
+	Else
+'	  MsgBox "Keeping " & B.Name
+	End If
+      Else
+'	MsgBox "VNS.Letter is long! |" & VNS.Letter & "|"
       End If
     End If
   Next B
@@ -97,6 +110,7 @@ Sub Generate (Vars as Variant, Cur() as Integer, path as String, FSuffix as Stri
     Px = path & "-" & Info & FSuffix
   End If
 
+'  MsgBox "Save " & Info
   ThisComponent.storeToUrl(Px, SaveArgs())
   Undo.undo()
 End Sub
@@ -124,7 +138,7 @@ Sub Frobnicate (FDesc as String, FSuffix as String, SaveArgs as Variant)
   Dim path
   If dlg_save.Execute() Then
     path = dlg_save.getFiles()(0)
-    MsgBox ConvertFromUrl(path)
+'    MsgBox ConvertFromUrl(path)
   Else
     MsgBox "Failed!"
     Exit Sub
